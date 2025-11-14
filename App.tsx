@@ -267,7 +267,7 @@ export default function App() {
   const handleDurationSelect = async (hours: number, multiplier: number) => {
     try {
       // 🧪 TEST MODE: Set to true to use 30 seconds instead of hours for testing
-      const TEST_MODE = true; // Change to true to test notifications quickly
+      const TEST_MODE = false; // Change to true to test notifications quickly
       const TEST_DURATION_SECONDS = 30; // 30 seconds for testing
       
       console.log(`⛏️ Starting mining: ${hours} hours, ${multiplier}x multiplier`);
