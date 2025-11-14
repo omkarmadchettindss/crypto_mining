@@ -283,4 +283,14 @@ export const MiningScreenStyles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 6,
   },
+  bannerAdContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 250,
+    width: '100%',
+  },
 });

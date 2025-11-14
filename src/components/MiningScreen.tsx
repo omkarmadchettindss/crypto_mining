@@ -9,9 +9,11 @@ import {
   Image,
 } from 'react-native';
 import { TrendingUp, Clock, Zap } from 'lucide-react-native';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import { MiningScreenStyles as styles } from './styles/MiningScreenStyles';
 import { updateMultiplier, getCurrentMiningSession } from '../services/api';
 import { loadRewardedAd, showRewardedAd } from './RewardedAdManager';
+import { BANNER_UNIT_ID } from '../config/constants';
 
 export interface MiningSession {
   duration: number;
@@ -43,6 +45,8 @@ export function MiningScreen({
   const [adVisible, setAdVisible] = useState(false);
   const [adCountdown, setAdCountdown] = useState(10);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [bannerLoaded, setBannerLoaded] = useState(false);
+  const [bannerError, setBannerError] = useState(false);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const adTimeoutRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -291,7 +295,54 @@ export function MiningScreen({
             </View>
           </ImageBackground>
         </View>
+
       </ScrollView>
+
+      {/* Banner Ad - Fixed at Bottom */}
+      {bannerLoaded && !bannerError && (
+        <View style={styles.bannerAdContainer}>
+          <BannerAd
+            unitId={__DEV__ ? TestIds.BANNER : BANNER_UNIT_ID}
+            size={BannerAdSize.FULL_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+            onAdLoaded={() => {
+              console.log('✅ Mining screen banner ad loaded');
+              setBannerLoaded(true);
+              setBannerError(false);
+            }}
+            onAdFailedToLoad={(error) => {
+              console.log('❌ Mining screen banner ad failed to load:', error);
+              setBannerLoaded(false);
+              setBannerError(true);
+            }}
+          />
+        </View>
+      )}
+
+      {/* Hidden BannerAd to preload */}
+      {!bannerLoaded && !bannerError && (
+        <View style={{ height: 0, overflow: 'hidden' }}>
+          <BannerAd
+            unitId={__DEV__ ? TestIds.BANNER : BANNER_UNIT_ID}
+            size={BannerAdSize.LARGE_BANNER}
+            requestOptions={{
+              requestNonPersonalizedAdsOnly: true,
+            }}
+            onAdLoaded={() => {
+              console.log('✅ Mining screen banner ad loaded');
+              setBannerLoaded(true);
+              setBannerError(false);
+            }}
+            onAdFailedToLoad={(error) => {
+              console.log('❌ Mining screen banner ad failed to load:', error);
+              setBannerLoaded(false);
+              setBannerError(true);
+            }}
+          />
+        </View>
+      )}
 
       {/* Ad Loading Modal */}
       <Modal visible={adVisible} transparent animationType="fade">

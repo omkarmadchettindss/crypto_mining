@@ -320,4 +320,13 @@ export const LeaderboardStyles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },
+  bannerAdContainer: {
+    marginTop: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 15,
+    overflow: 'hidden',
+    height: 120,
+    width: '100%',
+  },
 });

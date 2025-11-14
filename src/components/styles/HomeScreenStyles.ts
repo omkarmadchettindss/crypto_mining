@@ -303,4 +303,13 @@ export const HomeScreenStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+
+  bannerAdContainer: {
+    marginTop: -25,
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    height: 120,
+    width: '100%',
+  },
 });

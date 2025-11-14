@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -14,10 +14,12 @@ import {
   Sparkles,
   LogOut,
 } from 'lucide-react-native';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import { HomeScreenStyles as styles } from './styles/HomeScreenStyles';
 import { getUserBalance, getCurrentMiningSession } from '../services/api';
 import LottieView from 'lottie-react-native';
 import miningAnimation from '../assets/animations/CoinBox.json';
+import { BANNER_UNIT_ID } from '../config/constants';
 
 interface HomeScreenProps {
   balance: number;
@@ -46,6 +48,9 @@ export function HomeScreen({
   onOpenLeaderboard,
   onOpenWatchAds,
 }: HomeScreenProps) {
+  const [bannerLoaded, setBannerLoaded] = useState(false);
+  const [bannerError, setBannerError] = useState(false);
+
   const formatAddress = (addr: string) =>
     addr.length <= 10 ? addr : `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
@@ -138,6 +143,52 @@ export function HomeScreen({
           </View>
         )}
 
+        {/* Banner Ad */}
+        {bannerLoaded && !bannerError && (
+          <View style={styles.bannerAdContainer}>
+            <BannerAd
+              unitId={__DEV__ ? TestIds.BANNER : BANNER_UNIT_ID}
+              size={BannerAdSize.FULL_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+              onAdLoaded={() => {
+                console.log('✅ Banner ad loaded');
+                setBannerLoaded(true);
+                setBannerError(false);
+              }}
+              onAdFailedToLoad={(error) => {
+                console.log('❌ Banner ad failed to load:', error);
+                setBannerLoaded(false);
+                setBannerError(true);
+              }}
+            />
+          </View>
+        )}
+
+        {/* Hidden BannerAd to preload */}
+        {!bannerLoaded && !bannerError && (
+          <View style={{ height: 0, overflow: 'hidden' }}>
+            <BannerAd
+              unitId={__DEV__ ? TestIds.BANNER : BANNER_UNIT_ID}
+              size={BannerAdSize.FULL_BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+              onAdLoaded={() => {
+                console.log('✅ Banner ad loaded');
+                setBannerLoaded(true);
+                setBannerError(false);
+              }}
+              onAdFailedToLoad={(error) => {
+                console.log('❌ Banner ad failed to load:', error);
+                setBannerLoaded(false);
+                setBannerError(true);
+              }}
+            />
+          </View>
+        )}
+
         {/* Mining Status */}
         <TouchableOpacity
           activeOpacity={hasMiningSession ? 0.8 : 1}
@@ -208,19 +259,6 @@ export function HomeScreen({
           <View style={{ marginLeft: 8 }} />
           <Text style={styles.watchAdsButtonText}>Watch Ads & Earn</Text>
         </TouchableOpacity>
-
-        {/* Info Cards */}
-        <View style={styles.infoGrid}>
-          <View style={[styles.card, styles.infoCard]}>
-            <Text style={styles.infoLabel}>Base Rate</Text>
-            <Text style={styles.infoValue}>0.01/sec</Text>
-          </View>
-          <View style={{ marginLeft: 16 }} />
-          <View style={[styles.card, styles.infoCard]}>
-            <Text style={styles.infoLabel}>Max Multiplier</Text>
-            <Text style={styles.infoValue}>6×</Text>
-          </View>
-        </View>
       </ScrollView>
     </ImageBackground>
   );

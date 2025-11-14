@@ -10,8 +10,10 @@ import {
   RefreshControl,
 } from 'react-native';
 import { TrendingUp, Users } from 'lucide-react-native';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import { getLeaderboard } from '../services/api';
 import { LeaderboardStyles as styles } from './styles/LeaderboardStyles';
+import { BANNER_UNIT_ID } from '../config/constants';
 
 interface Leader {
   walletId: string;
@@ -29,6 +31,8 @@ export function LeaderboardScreen({ navigation, currentUserWallet }: Leaderboard
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [isAtTop, setIsAtTop] = useState(true);
+  const [bannerLoaded, setBannerLoaded] = useState(false);
+  const [bannerError, setBannerError] = useState(false);
   const isMounted = useRef(true);
 
   const formatAddress = (addr: string) =>
@@ -283,6 +287,52 @@ export function LeaderboardScreen({ navigation, currentUserWallet }: Leaderboard
                   ))}
                 </ScrollView>
               </ImageBackground>
+            )}
+
+            {/* Banner Ad */}
+            {bannerLoaded && !bannerError && (
+              <View style={styles.bannerAdContainer}>
+                <BannerAd
+                  unitId={__DEV__ ? TestIds.BANNER : BANNER_UNIT_ID}
+                  size={BannerAdSize.FULL_BANNER}
+                  requestOptions={{
+                    requestNonPersonalizedAdsOnly: true,
+                  }}
+                  onAdLoaded={() => {
+                    console.log('✅ Leaderboard banner ad loaded');
+                    setBannerLoaded(true);
+                    setBannerError(false);
+                  }}
+                  onAdFailedToLoad={(error) => {
+                    console.log('❌ Leaderboard banner ad failed to load:', error);
+                    setBannerLoaded(false);
+                    setBannerError(true);
+                  }}
+                />
+              </View>
+            )}
+
+            {/* Hidden BannerAd to preload */}
+            {!bannerLoaded && !bannerError && (
+              <View style={{ height: 0, overflow: 'hidden' }}>
+                <BannerAd
+                  unitId={__DEV__ ? TestIds.BANNER : BANNER_UNIT_ID}
+                  size={BannerAdSize.LARGE_BANNER}
+                  requestOptions={{
+                    requestNonPersonalizedAdsOnly: true,
+                  }}
+                  onAdLoaded={() => {
+                    console.log('✅ Leaderboard banner ad loaded');
+                    setBannerLoaded(true);
+                    setBannerError(false);
+                  }}
+                  onAdFailedToLoad={(error) => {
+                    console.log('❌ Leaderboard banner ad failed to load:', error);
+                    setBannerLoaded(false);
+                    setBannerError(true);
+                  }}
+                />
+              </View>
             )}
           </>
         )}
