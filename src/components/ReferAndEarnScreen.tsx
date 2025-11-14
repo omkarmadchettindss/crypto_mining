@@ -8,7 +8,10 @@ import {
   TextInput,
   Share,
   Alert,
+  ToastAndroid,
+  Platform,
 } from 'react-native';
+import Clipboard from '@react-native-clipboard/clipboard';
 import { Gift, Copy, Share2, X } from 'lucide-react-native';
 import { ReferAndEarnStyles as styles } from './styles/ReferAndEarnStyles';
 import { getReferralCode, submitReferralCode, canUseReferral } from '../services/api';
@@ -29,6 +32,7 @@ export function ReferAndEarnScreen({
   const [loading, setLoading] = useState(false);
   const [canUse, setCanUse] = useState(false);
   const [referralEarnings, setReferralEarnings] = useState(0);
+  const [referredCount, setReferredCount] = useState(0);
 
   useEffect(() => {
     loadData();
@@ -43,20 +47,26 @@ export function ReferAndEarnScreen({
 
       setReferralCode(codeData.referralCode);
       setReferralEarnings(codeData.referralEarnings || 0);
+      setReferredCount(codeData.referredCount || 0);
       setCanUse(canUseData.canUseReferral);
     } catch (error) {
       console.error('Error loading referral data:', error);
     }
   };
 
-  const handleCopyCode = async () => {
+  const handleCopyCode = () => {
     try {
-      // For React Native, we'll use Share API as clipboard
-      await Share.share({
-        message: `Join me on CryptoMiner! Use my referral code: ${referralCode}`,
-      });
+      Clipboard.setString(referralCode);
+      
+      // Show feedback to user
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Referral code copied to clipboard!', ToastAndroid.SHORT);
+      } else {
+        Alert.alert('Copied!', 'Referral code copied to clipboard');
+      }
     } catch (error) {
-      console.error('Error sharing code:', error);
+      console.error('Error copying code:', error);
+      Alert.alert('Error', 'Failed to copy code');
     }
   };
 
@@ -159,6 +169,18 @@ export function ReferAndEarnScreen({
                   <Share2 size={20} color="#ffaa00b5" />
                   <Text style={styles.actionButtonText}>Share</Text>
                 </TouchableOpacity>
+              </View>
+
+              {/* Stats Section */}
+              <View style={styles.statsContainer}>
+                <View style={styles.statBox}>
+                  <Text style={styles.statValue}>{referredCount}</Text>
+                  <Text style={styles.statLabel}>Referrals</Text>
+                </View>
+                <View style={styles.statBox}>
+                  <Text style={styles.statValue}>{referralEarnings}</Text>
+                  <Text style={styles.statLabel}>Tokens Earned</Text>
+                </View>
               </View>
             </View>
           </ImageBackground>

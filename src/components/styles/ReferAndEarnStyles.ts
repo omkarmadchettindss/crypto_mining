@@ -57,7 +57,7 @@ export const ReferAndEarnStyles = StyleSheet.create({
     marginLeft: -20,
     padding: 40,
     overflow: 'hidden',
-    marginBottom: 20,
+    marginTop: -30
   },
 
   cardImage: {
@@ -74,7 +74,7 @@ export const ReferAndEarnStyles = StyleSheet.create({
     color: '#ffdd77',
     fontSize: 22,
     fontWeight: '700',
-    marginBottom: 8,
+    // marginBottom: 8,
   },
 
   cardSubtitle: {
@@ -193,5 +193,35 @@ export const ReferAndEarnStyles = StyleSheet.create({
     color: '#e6c68c',
     fontSize: 14,
     lineHeight: 22,
+  },
+
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
+    gap: 12,
+  },
+
+  statBox: {
+    flex: 1,
+    backgroundColor: '#3b250f',
+    borderWidth: 1,
+    borderColor: '#6e4216ff',
+    borderRadius: 12,
+    padding: 10,
+    alignItems: 'center',
+  },
+
+  statValue: {
+    color: '#ffe7b3',
+    fontSize: 28,
+    fontWeight: '800',
+    marginBottom: 2,
+  },
+
+  statLabel: {
+    color: '#d6b58c',
+    fontSize: 12,
+    fontWeight: '600',
   },
 });

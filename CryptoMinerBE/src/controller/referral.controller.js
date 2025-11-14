@@ -32,6 +32,8 @@ exports.getReferralCode = async (req, res) => {
     res.json({
       referralCode: user.referralCode,
       referralEarnings: user.referralEarnings || 0,
+      referredUsers: user.referredUsers || [],
+      referredCount: (user.referredUsers || []).length,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -75,6 +77,15 @@ exports.submitReferralCode = async (req, res) => {
     const REFERRAL_REWARD = 100;
     referrer.totalEarned += REFERRAL_REWARD;
     referrer.referralEarnings = (referrer.referralEarnings || 0) + REFERRAL_REWARD;
+    
+    // Add the new user to referrer's referredUsers array
+    if (!referrer.referredUsers) {
+      referrer.referredUsers = [];
+    }
+    if (!referrer.referredUsers.includes(walletId)) {
+      referrer.referredUsers.push(walletId);
+    }
+    
     await referrer.save();
 
     // Mark current user as having used a referral
