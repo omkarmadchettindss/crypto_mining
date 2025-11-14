@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "447654891391",
+    "project_id": "rn-auth-2030d",
+    "storage_bucket": "rn-auth-2030d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:447654891391:android:a74abb79e385cd1d47544a",
+        "android_client_info": {
+          "package_name": "com.omkar.firstproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "447654891391-vj49qkgpn1elemeq6l7k1h54h5k6eiuo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.omkar.firstproject",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "447654891391-gu04tdua7iht256rg3rg115vkf71rtjv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKdPf_hL6ePXClKsF7mZfTy8w2bVOxb0E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "447654891391-gu04tdua7iht256rg3rg115vkf71rtjv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
