@@ -47,7 +47,6 @@ export default function App() {
   const scheduledNotificationId = useRef<string | null>(null);
   const appState = useRef(AppState.currentState);
 
-  // ✅ Setup notification permissions and channel
   useEffect(() => {
     const setupNotifications = async () => {
       try {

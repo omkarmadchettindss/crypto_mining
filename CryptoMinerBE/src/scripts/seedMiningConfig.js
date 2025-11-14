@@ -4,8 +4,7 @@ dotenv.config();
 const mongoose = require("mongoose");
 const MiningConfig = require("../models/miningConfig.model");
 
-const MONGO_URI =
-  "mongodb+srv://omkarmadchettindss_db_user:Omkar%40ndss@cluster0.5xpltr2.mongodb.net/crypto";
+const MONGO_URI = process.env.MONGO_URI;
 
 async function seedConfig() {
   await mongoose.connect(MONGO_URI);
