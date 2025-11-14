@@ -17,6 +17,7 @@ app.use("/api/user", require("./routes/user.routes"));
 app.use("/api/mining", require("./routes/mining.routes"));
 app.use("/api/config", require("./routes/miningConfig.routes"));
 app.use("/api/leaderboard", require("./routes/leaderBoard.routes"));
+app.use("/api/referral", require("./routes/referral.routes"));
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);

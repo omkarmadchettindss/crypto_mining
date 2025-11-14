@@ -11,6 +11,23 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  referralCode: {
+    type: String,
+    unique: true,
+    sparse: true,
+  },
+  referredBy: {
+    type: String,
+    default: null,
+  },
+  referralEarnings: {
+    type: Number,
+    default: 0,
+  },
+  hasUsedReferral: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 module.exports = mongoose.model("User", UserSchema);

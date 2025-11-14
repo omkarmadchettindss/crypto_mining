@@ -11,6 +11,7 @@ import { ClaimPopup } from './src/components/ClaimPopup';
 import { SplashScreen } from './src/components/SplashScreen';
 import { LeaderboardScreen } from './src/components/LeaderboardScreen';
 import { WatchAdsScreen } from './src/components/WatchAdsScreen';
+import { ReferAndEarnScreen } from './src/components/ReferAndEarnScreen';
 
 import {
   startMining as apiStartMining,
@@ -20,7 +21,7 @@ import {
 } from './src/services/api';
 import { notificationService } from './src/services/notificationService';
 
-type Screen = 'signup' | 'home' | 'mining' | 'leaderboard' | 'watchads';
+type Screen = 'signup' | 'home' | 'mining' | 'leaderboard' | 'watchads' | 'refer';
 
 export interface MiningSession {
   duration: number;
@@ -565,6 +566,7 @@ export default function App() {
               }}
               onOpenLeaderboard={() => setScreen('leaderboard')}
               onOpenWatchAds={() => setScreen('watchads')}
+              onOpenReferAndEarn={() => setScreen('refer')}
             />
           )}
 
@@ -594,6 +596,16 @@ export default function App() {
               onBack={() => setScreen('home')}
               onRewardClaimed={async (amount) => {
                 setClaimedAmount(amount);
+                await fetchBalance();
+                setLeaderboardRefreshKey(prev => prev + 1);
+              }}
+            />
+          )}
+
+          {screen === 'refer' && (
+            <ReferAndEarnScreen
+              onBack={() => setScreen('home')}
+              onReferralSuccess={async () => {
                 await fetchBalance();
                 setLeaderboardRefreshKey(prev => prev + 1);
               }}

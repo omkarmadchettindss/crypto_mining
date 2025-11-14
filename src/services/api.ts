@@ -78,3 +78,18 @@ export async function claimAdReward() {
   const response = await API.post('/mining/claim-ad-reward');
   return response.data;
 }
+
+export async function getReferralCode() {
+  const response = await API.get('/referral/code');
+  return response.data;
+}
+
+export async function submitReferralCode(referralCode: string) {
+  const response = await API.post('/referral/submit', { referralCode });
+  return response.data;
+}
+
+export async function canUseReferral() {
+  const response = await API.get('/referral/can-use');
+  return response.data;
+}

@@ -283,12 +283,12 @@ export const HomeScreenStyles = StyleSheet.create({
   },
 
   watchAdsButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 12,
     height: 64,
-    marginBottom: 24,
     backgroundColor: '#3b250fd8',
     borderWidth: 2,
     borderColor: '#ffaa00b5',
@@ -300,7 +300,7 @@ export const HomeScreenStyles = StyleSheet.create({
 
   watchAdsButtonText: {
     color: '#ffdd77',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
   },
 
@@ -311,5 +311,51 @@ export const HomeScreenStyles = StyleSheet.create({
     overflow: 'hidden',
     height: 120,
     width: '100%',
+  },
+
+  referralEarningsCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(74, 222, 128, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(74, 222, 128, 0.3)',
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 16,
+  },
+
+  referralEarningsText: {
+    color: '#4ade80',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+    marginBottom: 24,
+  },
+
+  referButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 12,
+    height: 64,
+    backgroundColor: '#3b250fd8',
+    borderWidth: 2,
+    borderColor: '#ffaa00b5',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 4,
+  },
+
+  referButtonText: {
+    color: '#ffdd77',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

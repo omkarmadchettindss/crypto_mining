@@ -13,10 +13,11 @@ import {
   Pickaxe,
   Sparkles,
   LogOut,
+  Gift,
 } from 'lucide-react-native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 import { HomeScreenStyles as styles } from './styles/HomeScreenStyles';
-import { getUserBalance, getCurrentMiningSession } from '../services/api';
+import { getUserBalance, getCurrentMiningSession, getReferralCode } from '../services/api';
 import LottieView from 'lottie-react-native';
 import miningAnimation from '../assets/animations/CoinBox.json';
 import { BANNER_UNIT_ID } from '../config/constants';
@@ -33,6 +34,7 @@ interface HomeScreenProps {
   onLogout: () => void;
   onOpenLeaderboard: () => void;
   onOpenWatchAds: () => void;
+  onOpenReferAndEarn: () => void;
 }
 
 export function HomeScreen({
@@ -47,9 +49,11 @@ export function HomeScreen({
   onLogout,
   onOpenLeaderboard,
   onOpenWatchAds,
+  onOpenReferAndEarn,
 }: HomeScreenProps) {
   const [bannerLoaded, setBannerLoaded] = useState(false);
   const [bannerError, setBannerError] = useState(false);
+  const [referralEarnings, setReferralEarnings] = useState(0);
 
   const formatAddress = (addr: string) =>
     addr.length <= 10 ? addr : `${addr.slice(0, 6)}...${addr.slice(-4)}`;
@@ -64,6 +68,12 @@ export function HomeScreen({
     getCurrentMiningSession()
       .then(res => {
         setHasMiningSession(res.hasActiveSession === true);
+      })
+      .catch(() => {});
+
+    getReferralCode()
+      .then(res => {
+        setReferralEarnings(res.referralEarnings || 0);
       })
       .catch(() => {});
   }, []);
@@ -234,6 +244,40 @@ export function HomeScreen({
           </ImageBackground>
         </TouchableOpacity>
 
+        {/* Referral Earnings Notification */}
+        {referralEarnings > 0 && (
+          <View style={styles.referralEarningsCard}>
+            <Gift size={20} color="#4ade80" />
+            <View style={{ marginLeft: 8 }} />
+            <Text style={styles.referralEarningsText}>
+              Earned {referralEarnings} tokens from referrals! 🎉
+            </Text>
+          </View>
+        )}
+
+        {/* Watch Ads & Refer Buttons Row */}
+        <View style={styles.buttonRow}>
+          <TouchableOpacity
+            onPress={onOpenWatchAds}
+            activeOpacity={0.8}
+            style={styles.watchAdsButton}
+          >
+            <Sparkles size={20} color="#ffaa00b5" />
+            <View style={{ marginLeft: 6 }} />
+            <Text style={styles.watchAdsButtonText}>Watch Ads</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={onOpenReferAndEarn}
+            activeOpacity={0.8}
+            style={styles.referButton}
+          >
+            <Gift size={20} color="#ffaa00b5" />
+            <View style={{ marginLeft: 6 }} />
+            <Text style={styles.referButtonText}>Refer & Earn</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* Start Mining Button */}
         <TouchableOpacity
           onPress={onStartMining}
@@ -247,17 +291,6 @@ export function HomeScreen({
           <Pickaxe size={24} color="#ffaa00b5" />
           <View style={{ marginLeft: 8 }} />
           <Text style={styles.miningButtonText}>Start Mining</Text>
-        </TouchableOpacity>
-
-        {/* Watch Ads Button */}
-        <TouchableOpacity
-          onPress={onOpenWatchAds}
-          activeOpacity={0.8}
-          style={styles.watchAdsButton}
-        >
-          <Sparkles size={24} color="#ffaa00b5" />
-          <View style={{ marginLeft: 8 }} />
-          <Text style={styles.watchAdsButtonText}>Watch Ads & Earn</Text>
         </TouchableOpacity>
       </ScrollView>
     </ImageBackground>
