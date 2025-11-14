@@ -135,22 +135,18 @@ exports.finishMining = async (req, res) => {
     }
 
     const now = new Date();
-
-    // Final calculation at finish
-    const elapsed = Math.floor(
-      (now - mining.currentMultiplierStartTime) / 1000
-    );
-    const earnedNow = elapsed * BASE_RATE * mining.multiplier;
+    const start = mining.miningStartTime;
+    const elapsed = Math.floor((now - start) / 1000);
 
     const totalSeconds = mining.selectedHour * 3600;
-    const maxReward = totalSeconds * BASE_RATE * mining.multiplier;
+    const rewardRate = BASE_RATE * mining.multiplier;
+    const maxReward = totalSeconds * rewardRate;
 
-    const updatedPoints = mining.currentMiningPoints + earnedNow;
+    // Use the SAME calculation as getCurrentMiningSession for consistency
+    const finalReward = Math.min(elapsed * rewardRate, maxReward);
 
-    // CAP reward to max
-    mining.currentMiningPoints = Math.min(updatedPoints, maxReward);
-    mining.totalEarned = mining.currentMiningPoints;
-
+    mining.currentMiningPoints = finalReward;
+    mining.totalEarned = finalReward;
     mining.status = "completed";
     mining.lastUpdated = now;
 
@@ -159,13 +155,15 @@ exports.finishMining = async (req, res) => {
     // Update user balance only once after completion
     const user = await User.findOne({ walletId: wallet });
     if (user) {
-      user.totalEarned += mining.totalEarned;
+      user.totalEarned += finalReward;
       await user.save();
     }
 
+    console.log(`✅ Mining finished for ${wallet}: ${finalReward} tokens`);
+
     return res.json({
       message: "Mining completed",
-      rewardGained: mining.totalEarned,
+      rewardGained: finalReward,
     });
   } catch (err) {
     return res.status(500).json({ message: err.message });

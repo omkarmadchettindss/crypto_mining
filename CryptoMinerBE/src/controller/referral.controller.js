@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const Referral = require("../models/referral.model");
 const crypto = require("crypto");
 
 // Generate unique referral code
@@ -10,30 +11,39 @@ function generateReferralCode() {
 exports.getReferralCode = async (req, res) => {
   try {
     const { walletId } = req.user;
-    let user = await User.findOne({ walletId });
-
+    
+    // Check if user exists
+    const user = await User.findOne({ walletId });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Find or create referral record
+    let referral = await Referral.findOne({ walletId });
+    
+    if (!referral) {
+      // Create new referral record
+      referral = new Referral({ walletId });
+    }
+
     // Generate referral code if doesn't exist
-    if (!user.referralCode) {
+    if (!referral.referralCode) {
       let code = generateReferralCode();
       
       // Ensure uniqueness
-      while (await User.findOne({ referralCode: code })) {
+      while (await Referral.findOne({ referralCode: code })) {
         code = generateReferralCode();
       }
       
-      user.referralCode = code;
-      await user.save();
+      referral.referralCode = code;
+      await referral.save();
     }
 
     res.json({
-      referralCode: user.referralCode,
-      referralEarnings: user.referralEarnings || 0,
-      referredUsers: user.referredUsers || [],
-      referredCount: (user.referredUsers || []).length,
+      referralCode: referral.referralCode,
+      referralEarnings: referral.referralEarnings || 0,
+      referredUsers: referral.referredUsers || [],
+      referredCount: (referral.referredUsers || []).length,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -50,53 +60,68 @@ exports.submitReferralCode = async (req, res) => {
       return res.status(400).json({ message: "Referral code is required" });
     }
 
+    // Check if current user exists
     const currentUser = await User.findOne({ walletId });
-
     if (!currentUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Find or create current user's referral record
+    let currentUserReferral = await Referral.findOne({ walletId });
+    if (!currentUserReferral) {
+      currentUserReferral = new Referral({ walletId });
+    }
+
     // Check if user already used a referral code
-    if (currentUser.hasUsedReferral) {
+    if (currentUserReferral.hasUsedReferral) {
       return res.status(400).json({ message: "You have already used a referral code" });
     }
 
-    // Find the referrer
-    const referrer = await User.findOne({ referralCode: referralCode.toUpperCase() });
+    // Find the referrer by referral code
+    const referrerReferral = await Referral.findOne({ 
+      referralCode: referralCode.toUpperCase() 
+    });
 
-    if (!referrer) {
+    if (!referrerReferral) {
       return res.status(404).json({ message: "Invalid referral code" });
     }
 
     // Can't refer yourself
-    if (referrer.walletId === walletId) {
+    if (referrerReferral.walletId === walletId) {
       return res.status(400).json({ message: "You cannot use your own referral code" });
+    }
+
+    // Find referrer user to update totalEarned
+    const referrerUser = await User.findOne({ walletId: referrerReferral.walletId });
+    if (!referrerUser) {
+      return res.status(404).json({ message: "Referrer user not found" });
     }
 
     // Reward the referrer with 100 tokens
     const REFERRAL_REWARD = 100;
-    referrer.totalEarned += REFERRAL_REWARD;
-    referrer.referralEarnings = (referrer.referralEarnings || 0) + REFERRAL_REWARD;
+    referrerUser.totalEarned += REFERRAL_REWARD;
+    await referrerUser.save();
+
+    // Update referrer's referral record
+    referrerReferral.referralEarnings = (referrerReferral.referralEarnings || 0) + REFERRAL_REWARD;
     
-    // Add the new user to referrer's referredUsers array
-    if (!referrer.referredUsers) {
-      referrer.referredUsers = [];
+    if (!referrerReferral.referredUsers) {
+      referrerReferral.referredUsers = [];
     }
-    if (!referrer.referredUsers.includes(walletId)) {
-      referrer.referredUsers.push(walletId);
+    if (!referrerReferral.referredUsers.includes(walletId)) {
+      referrerReferral.referredUsers.push(walletId);
     }
-    
-    await referrer.save();
+    await referrerReferral.save();
 
     // Mark current user as having used a referral
-    currentUser.referredBy = referrer.walletId;
-    currentUser.hasUsedReferral = true;
-    await currentUser.save();
+    currentUserReferral.referredBy = referrerReferral.walletId;
+    currentUserReferral.hasUsedReferral = true;
+    await currentUserReferral.save();
 
     res.json({
       message: "Referral code applied successfully",
       referrerRewarded: REFERRAL_REWARD,
-      referrerWallet: referrer.walletId,
+      referrerWallet: referrerReferral.walletId,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -107,15 +132,23 @@ exports.submitReferralCode = async (req, res) => {
 exports.canUseReferral = async (req, res) => {
   try {
     const { walletId } = req.user;
+    
+    // Check if user exists
     const user = await User.findOne({ walletId });
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Find or create referral record
+    let referral = await Referral.findOne({ walletId });
+    if (!referral) {
+      referral = new Referral({ walletId });
+      await referral.save();
+    }
+
     res.json({
-      canUseReferral: !user.hasUsedReferral,
-      hasUsedReferral: user.hasUsedReferral,
+      canUseReferral: !referral.hasUsedReferral,
+      hasUsedReferral: referral.hasUsedReferral,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

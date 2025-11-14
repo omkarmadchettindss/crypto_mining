@@ -74,7 +74,6 @@ export const ReferAndEarnStyles = StyleSheet.create({
     color: '#ffdd77',
     fontSize: 22,
     fontWeight: '700',
-    // marginBottom: 8,
   },
 
   cardSubtitle: {

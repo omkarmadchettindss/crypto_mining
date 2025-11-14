@@ -377,22 +377,32 @@ export default function App() {
     hasNotifiedRef.current = true;
     console.log('✅ Mining completed - handling claim');
 
-    // Fetch actual mined amount from backend
+    // Fetch actual mined amount from backend - this is the EXACT amount
     try {
       const sessionData = await getCurrentMiningSession();
       if (sessionData?.hasActiveSession) {
         const actualAmount = sessionData.currentMined || 0;
         setActualMinedAmount(actualAmount);
-        console.log('💰 Actual mined amount from backend:', actualAmount);
+        console.log('💰 Actual mined amount from backend (for popup):', actualAmount);
+      } else {
+        // If no active session, use the miningSession totalReward
+        if (miningSession) {
+          setActualMinedAmount(miningSession.totalReward);
+          console.log('💰 Using miningSession totalReward:', miningSession.totalReward);
+        }
       }
     } catch (error) {
       console.error('❌ Error fetching actual mined amount:', error);
+      // Fallback to miningSession totalReward
+      if (miningSession) {
+        setActualMinedAmount(miningSession.totalReward);
+      }
     }
 
     // Show claim popup
     console.log('✅ Showing claim popup');
     setShowClaimPopup(true);
-  }, []);
+  }, [miningSession]);
 
   // ✅ Monitor server status to handle DB time changes
   useEffect(() => {
@@ -469,13 +479,23 @@ export default function App() {
 
     try {
       console.log('💰 Claiming rewards...');
+      const amountToShow = actualMinedAmount || miningSession.totalReward;
+      console.log('💰 Amount shown in popup:', amountToShow);
+      
       await cancelScheduledNotification();
       
       const result = await apiFinishMining();
+      
+      // Use the backend's rewardGained as the source of truth
+      // This is what gets added to the user's balance
       const gained = typeof result.rewardGained === 'number'
         ? result.rewardGained
-        : miningSession.totalReward;
+        : amountToShow;
 
+      console.log('💰 Amount from backend (rewardGained):', result.rewardGained);
+      console.log('💰 Final claimed amount to display:', gained);
+
+      // Set this as the claimed amount to show in HomeScreen
       setClaimedAmount(gained);
       await fetchBalance();
       setLeaderboardRefreshKey(prev => prev + 1);

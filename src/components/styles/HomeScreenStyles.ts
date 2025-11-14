@@ -290,7 +290,7 @@ export const HomeScreenStyles = StyleSheet.create({
     borderRadius: 12,
     height: 64,
     backgroundColor: '#3b250fd8',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#ffaa00b5',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
@@ -322,6 +322,7 @@ export const HomeScreenStyles = StyleSheet.create({
     borderRadius: 16,
     padding: 14,
     marginBottom: 16,
+    marginTop: -15
   },
 
   referralEarningsText: {
@@ -345,7 +346,7 @@ export const HomeScreenStyles = StyleSheet.create({
     borderRadius: 12,
     height: 64,
     backgroundColor: '#3b250fd8',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#ffaa00b5',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.3,
