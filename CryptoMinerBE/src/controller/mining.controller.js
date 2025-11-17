@@ -2,8 +2,11 @@ const Mining = require("../models/mining.model");
 const User = require("../models/user.model");
 const MiningConfig = require("../models/miningConfig.model");
 const AdReward = require("../models/adReward.model");
+const Referral = require("../models/referral.model");
+const ReferralMiningReward = require("../models/referralMiningReward.model");
 
 const BASE_RATE = 0.01; // tokens per second
+const REFERRAL_MINING_BONUS_PERCENTAGE = 10; // 10% bonus for referrer
 
 exports.startMining = async (req, res) => {
   try {
@@ -152,7 +155,7 @@ exports.finishMining = async (req, res) => {
 
     await mining.save();
 
-    // Update user balance only once after completion
+    // Update user balance
     const user = await User.findOne({ walletId: wallet });
     if (user) {
       user.totalEarned += finalReward;
@@ -161,11 +164,53 @@ exports.finishMining = async (req, res) => {
 
     console.log(`✅ Mining finished for ${wallet}: ${finalReward} tokens`);
 
+    // Check if this user was referred by someone
+    const referral = await Referral.findOne({ walletId: wallet });
+    let referrerBonus = 0;
+    let referrerWallet = null;
+
+    if (referral && referral.referredBy) {
+      // Calculate 10% bonus for referrer
+      referrerBonus = finalReward * (REFERRAL_MINING_BONUS_PERCENTAGE / 100);
+      referrerWallet = referral.referredBy;
+
+      // Update referrer's balance
+      const referrerUser = await User.findOne({ walletId: referrerWallet });
+      if (referrerUser) {
+        referrerUser.totalEarned += referrerBonus;
+        await referrerUser.save();
+        console.log(`✅ Referrer ${referrerWallet} earned ${referrerBonus} tokens (10% of ${finalReward})`);
+      }
+
+      // Note: Mining rewards are NOT added to referralEarnings
+      // They are tracked separately in ReferralMiningReward collection
+      // referralEarnings only contains sign-up bonuses (100 tokens each)
+
+      // Record this referral mining reward
+      await ReferralMiningReward.create({
+        referrerWallet: referrerWallet,
+        referredWallet: wallet,
+        miningSessionId: mining._id,
+        referredUserEarned: finalReward,
+        referrerReward: referrerBonus,
+        rewardPercentage: REFERRAL_MINING_BONUS_PERCENTAGE,
+        claimedAt: now,
+      });
+
+      console.log(`✅ Referral mining reward recorded: ${referrerBonus} tokens to ${referrerWallet}`);
+    }
+
     return res.json({
       message: "Mining completed",
       rewardGained: finalReward,
+      referralBonus: referrerBonus > 0 ? {
+        referrerWallet: referrerWallet,
+        bonusAmount: referrerBonus,
+        percentage: REFERRAL_MINING_BONUS_PERCENTAGE,
+      } : null,
     });
   } catch (err) {
+    console.error("❌ Finish mining error:", err);
     return res.status(500).json({ message: err.message });
   }
 };
@@ -302,5 +347,28 @@ exports.claimAdReward = async (req, res) => {
       message: "Failed to claim ad reward",
       error: error.message,
     });
+  }
+};
+
+exports.getReferralMiningRewards = async (req, res) => {
+  try {
+    const { walletId } = req.user;
+
+    // Get all referral mining rewards where this user is the referrer
+    const rewards = await ReferralMiningReward.find({ 
+      referrerWallet: walletId 
+    }).sort({ claimedAt: -1 }).limit(50);
+
+    // Calculate total earned from referral mining
+    const totalEarned = rewards.reduce((sum, reward) => sum + reward.referrerReward, 0);
+
+    res.json({
+      rewards,
+      totalEarned,
+      count: rewards.length,
+    });
+  } catch (error) {
+    console.error("❌ Get referral mining rewards error:", error);
+    res.status(500).json({ message: error.message });
   }
 };

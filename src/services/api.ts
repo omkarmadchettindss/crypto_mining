@@ -93,3 +93,8 @@ export async function canUseReferral() {
   const response = await API.get('/referral/can-use');
   return response.data;
 }
+
+export async function getReferralMiningRewards() {
+  const response = await API.get('/mining/referral-mining-rewards');
+  return response.data;
+}

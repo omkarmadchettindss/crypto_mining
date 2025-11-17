@@ -1,5 +1,6 @@
 const User = require("../models/user.model");
 const Referral = require("../models/referral.model");
+const ReferralMiningReward = require("../models/referralMiningReward.model");
 const crypto = require("crypto");
 
 // Generate unique referral code
@@ -39,11 +40,31 @@ exports.getReferralCode = async (req, res) => {
       await referral.save();
     }
 
+    // Get total mining rewards from referred users
+    const miningRewards = await ReferralMiningReward.aggregate([
+      { $match: { referrerWallet: walletId } },
+      {
+        $group: {
+          _id: null,
+          totalMiningRewards: { $sum: "$referrerReward" },
+          miningRewardCount: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const totalMiningRewards = miningRewards.length > 0 ? miningRewards[0].totalMiningRewards : 0;
+    const miningRewardCount = miningRewards.length > 0 ? miningRewards[0].miningRewardCount : 0;
+
     res.json({
       referralCode: referral.referralCode,
       referralEarnings: referral.referralEarnings || 0,
       referredUsers: referral.referredUsers || [],
       referredCount: (referral.referredUsers || []).length,
+      miningRewards: {
+        total: totalMiningRewards,
+        count: miningRewardCount,
+      },
+      totalEarnings: (referral.referralEarnings || 0) + totalMiningRewards,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

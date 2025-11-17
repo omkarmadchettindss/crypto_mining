@@ -8,7 +8,8 @@ const {
   updateMultiplier,
   getBalance,
   getCurrentMiningSession,
-  claimAdReward
+  claimAdReward,
+  getReferralMiningRewards
 } = require("../controller/mining.controller");
 
 router.post("/start", auth, startMining);
@@ -17,5 +18,6 @@ router.post("/update-multiplier", auth, updateMultiplier);
 router.get("/balance", auth, getBalance);
 router.get("/session", auth, getCurrentMiningSession);
 router.post('/claim-ad-reward', auth, claimAdReward);
+router.get('/referral-mining-rewards', auth, getReferralMiningRewards);
 
 module.exports = router;

@@ -7,6 +7,16 @@ export const ReferAndEarnStyles = StyleSheet.create({
     height: '100%',
   },
 
+  scrollView: {
+    flex: 1,
+  },
+
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingTop: 60,
+    paddingBottom: 40,
+  },
+
   container: {
     flex: 1,
     padding: 24,
@@ -31,7 +41,7 @@ export const ReferAndEarnStyles = StyleSheet.create({
     borderColor: '#ffb300',
     paddingHorizontal: 20,
     paddingVertical: 8,
-    marginLeft: -20,
+    marginLeft: -18,
   },
 
   headerTitle: {
@@ -85,7 +95,7 @@ export const ReferAndEarnStyles = StyleSheet.create({
 
   codeContainer: {
     backgroundColor: '#3b250f',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: '#ffaa00b5',
     borderRadius: 12,
     padding: 20,
@@ -222,5 +232,60 @@ export const ReferAndEarnStyles = StyleSheet.create({
     color: '#d6b58c',
     fontSize: 12,
     fontWeight: '600',
+  },
+
+  miningRewardsCard: {
+    backgroundColor: 'rgba(74, 222, 128, 0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(74, 222, 128, 0.3)',
+    borderRadius: 12,
+    padding: 8,
+    alignItems: 'center',
+    marginTop: -15,
+    marginBottom: 30
+  },
+
+  miningRewardsTitle: {
+    color: '#4ade80',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+
+  miningRewardsAmount: {
+    color: '#4ade80',
+    fontSize: 24,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+
+  miningRewardsSubtext: {
+    color: '#ffe7b3',
+    fontSize: 11,
+    textAlign: 'center',
+  },
+
+  totalEarningsCard: {
+    backgroundColor: '#3b250f',
+    borderWidth: 2,
+    borderColor: '#ffaa00b5',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  totalEarningsLabel: {
+    color: '#ffdd77',
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+
+  totalEarningsAmount: {
+    color: '#ffe7b3',
+    fontSize: 32,
+    fontWeight: '800',
   },
 });

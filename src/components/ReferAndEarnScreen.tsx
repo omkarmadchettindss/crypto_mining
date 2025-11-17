@@ -10,9 +10,10 @@ import {
   Alert,
   ToastAndroid,
   Platform,
+  ScrollView,
 } from 'react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { Gift, Copy, Share2, X } from 'lucide-react-native';
+import { Gift, Copy, Share2 } from 'lucide-react-native';
 import { ReferAndEarnStyles as styles } from './styles/ReferAndEarnStyles';
 import { getReferralCode, submitReferralCode, canUseReferral } from '../services/api';
 
@@ -33,6 +34,8 @@ export function ReferAndEarnScreen({
   const [canUse, setCanUse] = useState(false);
   const [referralEarnings, setReferralEarnings] = useState(0);
   const [referredCount, setReferredCount] = useState(0);
+  const [miningRewards, setMiningRewards] = useState(0);
+  const [totalEarnings, setTotalEarnings] = useState(0);
 
   useEffect(() => {
     loadData();
@@ -48,6 +51,8 @@ export function ReferAndEarnScreen({
       setReferralCode(codeData.referralCode);
       setReferralEarnings(codeData.referralEarnings || 0);
       setReferredCount(codeData.referredCount || 0);
+      setMiningRewards(codeData.miningRewards?.total || 0);
+      setTotalEarnings(codeData.totalEarnings || 0);
       setCanUse(canUseData.canUseReferral);
     } catch (error) {
       console.error('Error loading referral data:', error);
@@ -119,7 +124,11 @@ export function ReferAndEarnScreen({
       style={styles.background}
       resizeMode="cover"
     >
-      <View style={styles.container}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={true}
+      >
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerCenter}>
@@ -179,12 +188,37 @@ export function ReferAndEarnScreen({
                 </View>
                 <View style={styles.statBox}>
                   <Text style={styles.statValue}>{referralEarnings}</Text>
-                  <Text style={styles.statLabel}>Tokens Earned</Text>
+                  <Text style={styles.statLabel}>Sign-up Bonus</Text>
                 </View>
               </View>
+
+              {/* Total Earnings */}
+              {totalEarnings > 0 && (
+                <View style={styles.totalEarningsCard}>
+                  <Text style={styles.totalEarningsLabel}>Total Referral Earnings</Text>
+                  <Text style={styles.totalEarningsAmount}>
+                    {totalEarnings.toFixed(2)} tokens
+                  </Text>
+                </View>
+              )}
             </View>
           </ImageBackground>
         )}
+
+        {/* Mining Rewards Section */}
+              {miningRewards > 0 && (
+                <View style={styles.miningRewardsCard}>
+                  <Text style={styles.miningRewardsTitle}>
+                    💎 Mining Rewards (10% Bonus)
+                  </Text>
+                  <Text style={styles.miningRewardsAmount}>
+                    {miningRewards.toFixed(2)} tokens
+                  </Text>
+                  <Text style={styles.miningRewardsSubtext}>
+                    Earned from your referrals' mining sessions
+                  </Text>
+                </View>
+              )}
 
         {/* Enter Referral Code Section */}
         {canUse && (
@@ -227,12 +261,13 @@ export function ReferAndEarnScreen({
           <Text style={styles.infoTitle}>How it works:</Text>
           <Text style={styles.infoText}>
             • Share your unique referral code with friends{'\n'}
-            • When they sign up and enter your code, you earn 100 tokens{'\n'}
+            • When they sign up, you earn 100 tokens instantly{'\n'}
+            • Earn 10% bonus from their mining sessions automatically{'\n'}
             • You can only use one referral code per account{'\n'}
             • Start earning by sharing now!
           </Text>
         </View>
-      </View>
+      </ScrollView>
     </ImageBackground>
   );
 }
