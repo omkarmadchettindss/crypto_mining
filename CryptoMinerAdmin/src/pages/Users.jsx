@@ -44,13 +44,19 @@ const Users = () => {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Users</h1>
-        <p className="text-gray-400 mt-1">Manage and view all platform users</p>
+      {/* Enhanced Header */}
+      <div className="mb-8 bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-2xl">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+          Users
+        </h1>
+        <p className="text-gray-400 mt-2 flex items-center gap-2">
+          <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+          Manage and view all platform users
+        </p>
       </div>
 
       {/* Search and Filters */}
-      <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-4 mb-6">
+      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-700/50 p-6 mb-6">
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
@@ -69,7 +75,7 @@ const Users = () => {
       </div>
 
       {/* Users Table */}
-      <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden">
+      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-700/50 overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>

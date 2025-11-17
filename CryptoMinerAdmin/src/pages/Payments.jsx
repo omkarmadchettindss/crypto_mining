@@ -72,61 +72,75 @@ const Payments = () => {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Payments & Rewards</h1>
-        <p className="text-gray-400 mt-1">Manage user payments and track distributions</p>
+      {/* Enhanced Header */}
+      <div className="mb-8 bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50 shadow-2xl">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+          Payments & Rewards
+        </h1>
+        <p className="text-gray-400 mt-2 flex items-center gap-2">
+          <span className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></span>
+          Manage user payments and track distributions
+        </p>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+        <div className="bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-lg shadow-lg border border-green-500/30 hover:border-green-500/50 p-6 hover-scale transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Total Rewards</p>
-              <h3 className="text-2xl font-bold mt-1">
+              <p className="text-sm text-gray-300">Total Rewards</p>
+              <h3 className="text-2xl font-bold mt-1 text-white">
                 {stats.totalRewards?.toFixed(0)}
               </h3>
             </div>
-            <DollarSign className="w-8 h-8 text-green-500" />
+            <div className="p-2 bg-green-500/20 rounded-lg">
+              <DollarSign className="w-8 h-8 text-green-400" />
+            </div>
           </div>
         </div>
-        <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+        <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-lg shadow-lg border border-blue-500/30 hover:border-blue-500/50 p-6 hover-scale transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Ad Rewards</p>
-              <h3 className="text-2xl font-bold mt-1">
+              <p className="text-sm text-gray-300">Ad Rewards</p>
+              <h3 className="text-2xl font-bold mt-1 text-white">
                 {stats.totalAdRewards?.toFixed(0)}
               </h3>
             </div>
-            <Gift className="w-8 h-8 text-blue-500" />
+            <div className="p-2 bg-blue-500/20 rounded-lg">
+              <Gift className="w-8 h-8 text-blue-400" />
+            </div>
           </div>
         </div>
-        <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+        <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 rounded-lg shadow-lg border border-purple-500/30 hover:border-purple-500/50 p-6 hover-scale transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Referral Bonus</p>
-              <h3 className="text-2xl font-bold mt-1">
+              <p className="text-sm text-gray-300">Referral Bonus</p>
+              <h3 className="text-2xl font-bold mt-1 text-white">
                 {stats.totalReferralBonus?.toFixed(0)}
               </h3>
             </div>
-            <TrendingUp className="w-8 h-8 text-purple-500" />
+            <div className="p-2 bg-purple-500/20 rounded-lg">
+              <TrendingUp className="w-8 h-8 text-purple-400" />
+            </div>
           </div>
         </div>
-        <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 p-6">
+        <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/5 rounded-lg shadow-lg border border-yellow-500/30 hover:border-yellow-500/50 p-6 hover-scale transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-400">Mining Rewards</p>
-              <h3 className="text-2xl font-bold mt-1">
+              <p className="text-sm text-gray-300">Mining Rewards</p>
+              <h3 className="text-2xl font-bold mt-1 text-white">
                 {stats.totalReferralMining?.toFixed(0)}
               </h3>
             </div>
-            <TrendingUp className="w-8 h-8 text-yellow-500" />
+            <div className="p-2 bg-yellow-500/20 rounded-lg">
+              <TrendingUp className="w-8 h-8 text-yellow-400" />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Users Payment Table */}
-      <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700 overflow-hidden">
+      <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-gray-700/50 overflow-hidden">
         <div className="p-6 border-b border-gray-700">
           <h3 className="text-lg font-semibold">User Payments</h3>
           <p className="text-sm text-gray-400 mt-1">Process payments for users</p>
